@@ -224,20 +224,20 @@
                 document.getElementById('lang-select').setAttribute('disabled', '');
                 document.getElementById('load-file-button-id').setAttribute('disabled', '');
                 var fTesseractCall = function(){
-                    Tesseract.recognize(arrImagesCopy.splice(0, 1)[0], {lang: $('#lang-select option:selected')[0].value}).progress(function (progress) {
-                        if(progress && progress.status === "recognizing text"){
-                            var nPercent =  (100*(progress.progress + nStartFilesCount - arrImagesCopy.length - 1)/nStartFilesCount) >> 0;
-                            $('#status-label').text('Recognizing: '+ nPercent + '%');
+                    Tesseract.recognize(arrImagesCopy.splice(0, 1)[0], $('#lang-select option:selected')[0].value, {logger: progress => {
+                        if (progress && progress.status === "recognizing text") {
+                            var nPercent = (100 * (progress.progress + nStartFilesCount - arrImagesCopy.length - 1) / nStartFilesCount) >> 0;
+                            $('#status-label').text('Recognizing: ' + nPercent + '%');
                         }
-                    }).catch(function(err){						
+                    }
+                    }).catch(err => {						
                                 $('#status-label').text('');
                                 document.getElementById('recognize-button').removeAttribute('disabled');
                                 document.getElementById('lang-select').removeAttribute('disabled');
 								document.getElementById('load-file-button-id').removeAttribute('disabled', '');
-						
-					}).then(function(result){						
-						 document.getElementById('text-container-div').appendChild($(result.html)[0]);
-                            arrParsedData.push(result);
+					}).then(result => {						
+						 document.getElementById('text-container-div').appendChild($(result.data.hocr)[0]);
+                            arrParsedData.push(result.data);
                             updateScroll();
                             if(arrImagesCopy.length > 0){
                                 fTesseractCall();
